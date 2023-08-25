@@ -1,18 +1,36 @@
 "use client"
 
-import Image from 'next/image'
 import FeedbackItem from './components/FeedbackItem'
 import { useState } from 'react'
 import FeedbackFormPopup from './components/FeedbackFormPopup'
 import Button from './components/Button'
+import FeedbackItemPopup from './components/FeedbackItemPopup'
 
 export default function Home() {
 
-  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false)
+  const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false)
+  const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null)
 
-  function openFeedbackPopUp() {
-    setShowFeedbackPopup(true)
+  function openFeedbackPopupForm() {
+    setShowFeedbackPopupForm(true)
   }
+
+  function openFeedbackPopupItem(feedback) {
+    setShowFeedbackPopupItem(feedback)
+  }
+
+  const feedbacks = [
+    { 
+      title: 'Please more vides', 
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      votesCount: 80
+    },
+    { 
+      title: 'Youtube vides', 
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborums.',
+      votesCount: 50
+    }
+  ]
 
   return (
     <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
@@ -26,19 +44,24 @@ export default function Home() {
 
         </div>
         <div>
-          <Button primary onClick={openFeedbackPopUp} >Make a suggestion</Button>
+          <Button primary onClick={openFeedbackPopupForm} >Make a suggestion</Button>
         </div>
       </div>
 
       <div className='px-8'>
-        <FeedbackItem />
-        <FeedbackItem />
-        <FeedbackItem />
+        { feedbacks.map( feedback => (
+          <FeedbackItem { ...feedback } key={feedback.title} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
+        ) ) }
+        
       </div>
 
-      {showFeedbackPopup && (
-        <FeedbackFormPopup setShowPopup={setShowFeedbackPopup}/>
+      {showFeedbackPopupForm && (
+        <FeedbackFormPopup setShowPopup={setShowFeedbackPopupForm}/>
       )}
+
+      { showFeedbackPopupItem && (
+        <FeedbackItemPopup {...showFeedbackPopupItem} setShowPopup={setShowFeedbackPopupItem}/>
+      ) }
     </main>
   )
 }
