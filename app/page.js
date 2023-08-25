@@ -1,9 +1,28 @@
 import Image from 'next/image'
+import FeedbackItem from './components/FeedbackItem'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      Hello world!
+    <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
+      <div className='bg-gradient-to-r from-cyan-400 to-blue-400 p-8'>
+        <h1 className='font-bold text-xl'>Feedback Board</h1>
+        <p className='text-opacity-90 text-slate-700'>Help me decide what should I build next or how can I improve</p>
+      </div>
+
+      <div className='bg-gray-100 px-8 py-4 flex border-b'>
+        <div className='grow'>
+
+        </div>
+        <div>
+          <button className='bg-blue-500 py-1 px-4 rounded-md text-white text-opacity-90'>Make a suggestion</button>
+        </div>
+      </div>
+
+      <div className='px-8'>
+        <FeedbackItem />
+        <FeedbackItem />
+        <FeedbackItem />
+      </div>
     </main>
   )
 }
