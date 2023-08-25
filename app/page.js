@@ -1,7 +1,19 @@
+"use client"
+
 import Image from 'next/image'
 import FeedbackItem from './components/FeedbackItem'
+import { useState } from 'react'
+import FeedbackFormPopup from './components/FeedbackFormPopup'
+import Button from './components/Button'
 
 export default function Home() {
+
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false)
+
+  function openFeedbackPopUp() {
+    setShowFeedbackPopup(true)
+  }
+
   return (
     <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
       <div className='bg-gradient-to-r from-cyan-400 to-blue-400 p-8'>
@@ -14,7 +26,7 @@ export default function Home() {
 
         </div>
         <div>
-          <button className='bg-blue-500 py-1 px-4 rounded-md text-white text-opacity-90'>Make a suggestion</button>
+          <Button primary onClick={openFeedbackPopUp} >Make a suggestion</Button>
         </div>
       </div>
 
@@ -23,6 +35,10 @@ export default function Home() {
         <FeedbackItem />
         <FeedbackItem />
       </div>
+
+      {showFeedbackPopup && (
+        <FeedbackFormPopup setShowPopup={setShowFeedbackPopup}/>
+      )}
     </main>
   )
 }
