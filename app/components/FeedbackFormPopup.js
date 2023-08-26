@@ -3,6 +3,7 @@ import Button from './Button'
 import Popup from './Popup'
 import axios from 'axios'
 import PaperClip from './icons/PaperClip'
+import Trash from './icons/Trash'
 
 const FeedbackFormPopup = ({setShowPopup}) => {
 
@@ -35,6 +36,15 @@ const FeedbackFormPopup = ({setShowPopup}) => {
     }
 
 
+    const handleRemoveFilesButtonClick = async(e, link) => {
+        e.preventDefault();
+
+        setUploadImages(currentUploads => {
+            return currentUploads.filter(val => val !== link)
+        })
+    }
+
+
   return (
     <Popup setShowPopup={setShowPopup} title={"Make a suggestion"}>
         <form className='p-8'>
@@ -45,10 +55,13 @@ const FeedbackFormPopup = ({setShowPopup}) => {
             {uploadImages?.length > 0 && (
                 <div>
                     <label className='block mt-2 mb-1 text-slate-700'>Images</label>
-                    <div className='flex gap-2'>
+                    <div className='flex gap-3'>
                         {uploadImages.map(link => (
-                            <a href={link} target='_blank' className='h-8' key={link}>
-                                {link.endsWith('.jpg') ? 
+                            <a href={link} target='_blank' className='h-16 relative' key={link}>
+                                <button onClick={e => handleRemoveFilesButtonClick(e, link)} className='-right-2 -top-2 absolute bg-red-400 p-1  rounded-md text-white'>
+                                    <Trash />
+                                </button>
+                                {(link.endsWith('.jpg') || link.endsWith('.png') ) ? 
                                     (<img className='h-16 w-auto rounded-md' src={link} alt=''/>) : 
                                     (<div className='bg-gray-200 h-16 p-2 flex items-center rounded-md'>
                                         <PaperClip className='w-4 h-4'/>
