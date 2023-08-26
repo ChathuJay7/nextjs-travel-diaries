@@ -16,6 +16,12 @@ export async function POST(req) {
     return NextResponse.json({ message: "Feedback added", data: feedback }, { status: 201 })
 }
 
-export function GET() {
-    return Response.json('test roye')
+
+export async function GET() {
+
+    const mongoUrl = process.env.MONGO_URL
+    await mongoose.connect(mongoUrl)
+
+    const feedbacks = await FeedbackModel.find();
+    return NextResponse.json({ feedbacks });
 }

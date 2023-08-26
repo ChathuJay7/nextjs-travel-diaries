@@ -1,15 +1,24 @@
 "use client"
 
 import FeedbackItem from './components/FeedbackItem'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FeedbackFormPopup from './components/FeedbackFormPopup'
 import Button from './components/Button'
 import FeedbackItemPopup from './components/FeedbackItemPopup'
+import axios from 'axios'
 
 export default function Home() {
 
   const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false)
   const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null)
+  const [feedbacks, setFeedbacks] = useState([])
+
+  useEffect(() => {
+    axios.get("/api/feedback").then(res => {
+      setFeedbacks(res.data.feedbacks)
+      console.log(feedbacks)
+    })
+  }, [])
 
   function openFeedbackPopupForm() {
     setShowFeedbackPopupForm(true)
@@ -18,19 +27,6 @@ export default function Home() {
   function openFeedbackPopupItem(feedback) {
     setShowFeedbackPopupItem(feedback)
   }
-
-  const feedbacks = [
-    { 
-      title: 'Please more vides', 
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-      votesCount: 80
-    },
-    { 
-      title: 'Youtube vides', 
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborums.',
-      votesCount: 50
-    }
-  ]
 
   return (
     <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
@@ -50,7 +46,7 @@ export default function Home() {
 
       <div className='px-8'>
         { feedbacks.map( feedback => (
-          <FeedbackItem { ...feedback } key={feedback.title} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
+          <FeedbackItem { ...feedback } key={feedback._id} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
         ) ) }
         
       </div>
