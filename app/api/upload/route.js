@@ -12,6 +12,8 @@ export async function POST(req) {
 
     const formData = await req.formData()
 
+    const links = [];
+
     for(const fileInfo of formData) {
 
         const file = fileInfo[1];
@@ -31,8 +33,8 @@ export async function POST(req) {
             ContentType: file.type
         }))
 
-        console.log('https://feedback-board-upload-cwd.s3.amazonaws.com/' + fileName)
+        links.push('https://feedback-board-upload-cwd.s3.amazonaws.com/' + fileName)
     }
 
-    return Response.json('ok')
+    return Response.json(links)
 }

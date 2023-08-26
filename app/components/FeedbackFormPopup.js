@@ -2,11 +2,13 @@ import React, { useState } from 'react'
 import Button from './Button'
 import Popup from './Popup'
 import axios from 'axios'
+import PaperClip from './icons/PaperClip'
 
 const FeedbackFormPopup = ({setShowPopup}) => {
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
+    const [uploadImages, setUploadImages] = useState([])
     
     const handleCreatePostButtonClick = (e) => {
         e.preventDefault();
@@ -27,7 +29,9 @@ const FeedbackFormPopup = ({setShowPopup}) => {
         }
 
         const res = await axios.post('/api/upload', data)
-        console.log(res)  
+        setUploadImages((existingUpload) => {
+            return [ ...existingUpload, ...res.data ]
+        })
     }
 
 
@@ -38,6 +42,23 @@ const FeedbackFormPopup = ({setShowPopup}) => {
             <input className='w-full border p-2 rounded-md' type='text' placeholder='A short, descriptive title' value={title} onChange={e => setTitle(e.target.value)}/>
             <label className='block mt-4 mb-1 text-slate-700'>Description</label>
             <textarea className='w-full border' placeholder='Please include details according to title' value={description} onChange={e => setDescription(e.target.value)}></textarea>
+            {uploadImages?.length > 0 && (
+                <div>
+                    <label className='block mt-2 mb-1 text-slate-700'>Images</label>
+                    <div className='flex gap-2'>
+                        {uploadImages.map(link => (
+                            <a href={link} target='_blank' className='h-8' key={link}>
+                                {link.endsWith('.jpg') ? 
+                                    (<img className='h-16 w-auto rounded-md' src={link} alt=''/>) : 
+                                    (<div className='bg-gray-200 h-16 p-2 flex items-center rounded-md'>
+                                        <PaperClip className='w-4 h-4'/>
+                                        {link.split('/')[3].substring(13)}
+                                    </div>)}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
             <div className='flex gap-2 mt-2 justify-end '>
                 <label className='py-2 px-4 text-gray-600 cursor-pointer'>
                     <span>Attach files</span>
