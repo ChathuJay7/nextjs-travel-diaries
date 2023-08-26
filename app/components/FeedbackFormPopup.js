@@ -4,12 +4,14 @@ import Popup from './Popup'
 import axios from 'axios'
 import PaperClip from './icons/PaperClip'
 import Trash from './icons/Trash'
+import { MoonLoader } from 'react-spinners'
 
 const FeedbackFormPopup = ({setShowPopup}) => {
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [uploadImages, setUploadImages] = useState([])
+    const [isUploading, setIsUploading] = useState(false)
     
     const handleCreatePostButtonClick = (e) => {
         e.preventDefault();
@@ -23,6 +25,8 @@ const FeedbackFormPopup = ({setShowPopup}) => {
     const handleAttachFilesInputChange = async (e) => {
         const files = [...e.target.files]
 
+        setIsUploading(true)
+
         const data = new FormData();
 
         for(const file of files) {
@@ -33,6 +37,8 @@ const FeedbackFormPopup = ({setShowPopup}) => {
         setUploadImages((existingUpload) => {
             return [ ...existingUpload, ...res.data ]
         })
+
+        setIsUploading(false)
     }
 
 
@@ -73,8 +79,11 @@ const FeedbackFormPopup = ({setShowPopup}) => {
                 </div>
             )}
             <div className='flex gap-2 mt-2 justify-end '>
-                <label className='py-2 px-4 text-gray-600 cursor-pointer'>
-                    <span>Attach files</span>
+                <label className={'flex gap-2 py-2 px-4 cursor-pointer'}>
+                    {isUploading && (<MoonLoader size={18}/>)}
+                    <span className={(isUploading ? 'text-gray-300' : 'text-gray-600')}>
+                        {isUploading ? "Uploading..." : "Attach files"}
+                    </span>
                     <input multiple onChange={handleAttachFilesInputChange} type='file' className='hidden'/>
                 </label>
                 <Button primary onClick={handleCreatePostButtonClick}>Create Post</Button>
