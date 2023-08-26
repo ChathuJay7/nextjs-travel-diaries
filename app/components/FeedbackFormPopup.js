@@ -16,7 +16,7 @@ const FeedbackFormPopup = ({setShowPopup}) => {
     const handleCreatePostButtonClick = (e) => {
         e.preventDefault();
 
-        axios.post('/api/feedback', {title: title, description: description})
+        axios.post('/api/feedback', {title: title, description: description, uploadImages})
             .then(() => {
                 setShowPopup(false)
             })
