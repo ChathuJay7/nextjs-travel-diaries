@@ -84,7 +84,7 @@ const FeedbackBoard = () => {
         )}
 
         { showFeedbackPopupItem && (
-          <FeedbackItemPopup {...showFeedbackPopupItem} setShowPopup={setShowFeedbackPopupItem}/>
+          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem}/>
         ) }
     </main>
   )
