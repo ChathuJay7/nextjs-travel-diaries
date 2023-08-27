@@ -3,7 +3,7 @@ import Popup from './Popup';
 import Button from './Button';
 import { signIn } from 'next-auth/react';
 
-const FeedbackItem = ({ onOpenFeedback, _id, title, description, votesCount }) => {
+const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes }) => {
 
     const [showLoginPopup, setShowLoginPopup] = useState(false)
 
@@ -38,13 +38,13 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votesCount }) =
             {showLoginPopup && (
                 <Popup title={'Confirm your vote!'} narrow setShowPopup={setShowLoginPopup}>
                     <div className='p-4'>
-                        <Button onClick={handleGoogleLoginButtonClick}>Login</Button>
+                        <Button primary onClick={handleGoogleLoginButtonClick}>Login</Button>
                     </div>
                 </Popup>
             )}
             <button onClick={handleVoteButtonClick} className='shadow-sm shadow-gray-200 border rounded-md px-4 py-1 flex items-center gap-1 text-gray-600'>
               <span className='triangle-vote-up'></span>
-              { votesCount || '0' }
+              { votes?.length || '0' }
             </button>
           </div>
     </a>
