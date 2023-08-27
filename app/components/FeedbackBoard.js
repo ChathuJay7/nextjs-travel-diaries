@@ -14,6 +14,7 @@ const FeedbackBoard = () => {
     const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null)
     const [feedbacks, setFeedbacks] = useState([])
     const [votes, setVotes] = useState([])
+    const [voteLoading, setVotesLoading] = useState([])
     
     const { data: session } = useSession()
 
@@ -24,23 +25,27 @@ const FeedbackBoard = () => {
     }, [])
 
     useEffect(() => {
-        const ids = feedbacks.map(f => f._id)
-        axios.get("/api/vote?feedbackIds=" + ids.join(',')).then(res => {
-            setVotes(res.data)
-        })
+        fetchVotes()
     }, [feedbacks])
 
     useEffect(() => {
         if(session?.user?.email){
             const feedbackId = localStorage.getItem('vote after login')
 
-            if(feedbackId) {
-                axios.post('/api/vote', {
-                    feedbackId
-                })
+            if(feedbackId) { 
+                axios.post('/api/vote', {feedbackId})
+                localStorage.removeItem('vote after login')
             }
         }
     }, [session?.user?.email])
+
+    async function fetchVotes() {
+        setVotesLoading(true)
+        const ids = feedbacks.map(f => f._id)
+        const res = await axios.get("/api/vote?feedbackIds=" + ids.join(','))
+        setVotes(res.data)
+        setVotesLoading(false)
+    }
 
     function openFeedbackPopupForm() {
         setShowFeedbackPopupForm(true)
@@ -52,7 +57,6 @@ const FeedbackBoard = () => {
 
   return (
     <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
-        {votes?.map(v => v.feedbackId).join(',')}
         { session?.user?.email || 'not logged in' }
         <div className='bg-gradient-to-r from-cyan-400 to-blue-400 p-8'>
           <h1 className='font-bold text-xl'>Feedback Board</h1>
@@ -70,7 +74,7 @@ const FeedbackBoard = () => {
 
         <div className='px-8'>
           { feedbacks.map( feedback => (
-            <FeedbackItem { ...feedback } key={feedback._id} votes={votes.filter(v => v.feedbackId.toString() === feedback._id.toString())} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
+            <FeedbackItem { ...feedback } key={feedback._id} votes={votes.filter(v => v.feedbackId.toString() === feedback._id.toString())} onVotesChange={fetchVotes} parentLoadingVotes={voteLoading} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
           ) ) }
           
         </div>

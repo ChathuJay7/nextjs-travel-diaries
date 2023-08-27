@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 import Popup from './Popup';
 import Button from './Button';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import axios from 'axios';
+import { MoonLoader } from 'react-spinners'
 
-const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes }) => {
+const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes, onVotesChange, parentLoadingVotes=true }) => {
 
     const [showLoginPopup, setShowLoginPopup] = useState(false)
+    const [isVotesLoading, setIsVotesLoading] = useState(false)
 
-    const isLoggedIn = false
+    const { data: session } = useSession()
+    const isLoggedIn = !!session?.user?.email;
 
     const handleVoteButtonClick = (e) => {
         e.stopPropagation();
@@ -16,7 +20,16 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes }) => {
         if(!isLoggedIn) {
             localStorage.setItem('vote after login', _id)
             setShowLoginPopup(true)
+        } else {
+            setIsVotesLoading(true);
+
+            axios.post('api/vote', {feedbackId: _id}).then( async() => {
+                await onVotesChange()
+                setIsVotesLoading(false);
+            });
+            
         }
+
     }
 
     const handleGoogleLoginButtonClick = async (e) => {
@@ -42,10 +55,20 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes }) => {
                     </div>
                 </Popup>
             )}
+            
             <button onClick={handleVoteButtonClick} className='shadow-sm shadow-gray-200 border rounded-md px-4 py-1 flex items-center gap-1 text-gray-600'>
-              <span className='triangle-vote-up'></span>
-              { votes?.length || '0' }
+                    { !isVotesLoading && (
+                        <>
+                            <span className='triangle-vote-up'></span>
+                            { votes?.length || '0' }
+                        </>
+                    )}
+                    { isVotesLoading && (
+                        <MoonLoader size={18}/>
+                    )}
+    
             </button>
+
           </div>
     </a>
   )

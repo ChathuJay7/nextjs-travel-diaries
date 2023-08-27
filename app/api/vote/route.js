@@ -15,10 +15,17 @@ export async function POST(req) {
     const session = await getServerSession(authOptions)
     const { email } = session.user
 
-    //return Response.json({feedbackId, session})
+    const existingVote = await VoteModel.findOne({feedbackId, userEmail: email})
 
-    const voteOutput = await VoteModel.create({ userEmail: email, feedbackId })
-    return NextResponse.json({ message: "Vote added", voteOutput }, { status: 201 })
+    if(existingVote){
+        await VoteModel.findByIdAndDelete({ _id:existingVote._id })
+        return NextResponse.json(existingVote)
+    }
+    else {
+        const voteOutput = await VoteModel.create({ userEmail: email, feedbackId })
+        return NextResponse.json({ message: "Vote added", voteOutput }, { status: 201 })
+    }
+    
 }
 
 export async function GET(req) {
