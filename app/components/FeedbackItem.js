@@ -1,18 +1,32 @@
 import React, { useState } from 'react'
 import Popup from './Popup';
+import Button from './Button';
+import { signIn } from 'next-auth/react';
 
-const FeedbackItem = ({ onOpenFeedback, title, description, votesCount }) => {
+const FeedbackItem = ({ onOpenFeedback, _id, title, description, votesCount }) => {
 
     const [showLoginPopup, setShowLoginPopup] = useState(false)
+
+    const isLoggedIn = false
 
     const handleVoteButtonClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
 
-        setShowLoginPopup(true)
+        if(!isLoggedIn) {
+            localStorage.setItem('vote after login', _id)
+            setShowLoginPopup(true)
+        }
     }
 
-    const isLoggedIn = false
+    const handleGoogleLoginButtonClick = async (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        await signIn('google')
+    }
+
+    
 
   return (
     <a href='' onClick={ (e) => { e.preventDefault(); onOpenFeedback(); } } className='my-8 flex gap-8 items-center'>
@@ -24,7 +38,7 @@ const FeedbackItem = ({ onOpenFeedback, title, description, votesCount }) => {
             {showLoginPopup && (
                 <Popup title={'Confirm your vote!'} narrow setShowPopup={setShowLoginPopup}>
                     <div className='p-4'>
-                        Login page
+                        <Button onClick={handleGoogleLoginButtonClick}>Login</Button>
                     </div>
                 </Popup>
             )}
