@@ -27,8 +27,7 @@ const feedbackSchema = new Schema(
         required: true,
     },
     description: {
-        type: String,
-        required: true,
+        type: String
     },
     images: {
         type: [String],

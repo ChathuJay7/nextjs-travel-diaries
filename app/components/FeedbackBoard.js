@@ -19,9 +19,7 @@ const FeedbackBoard = () => {
     const { data: session } = useSession()
 
     useEffect(() => {
-        axios.get("/api/feedback").then(res => {
-            setFeedbacks(res.data.feedbacks)
-        })
+      fetchFeedbacks()
     }, [])
 
     useEffect(() => {
@@ -40,6 +38,12 @@ const FeedbackBoard = () => {
             }
         }
     }, [session?.user?.email])
+
+    async function fetchFeedbacks() {
+      axios.get("/api/feedback").then(res => {
+        setFeedbacks(res.data.feedbacks)
+      })
+    }
 
     async function fetchVotes() {
         setVotesLoading(true)
@@ -82,7 +86,7 @@ const FeedbackBoard = () => {
         </div>
 
         {showFeedbackPopupForm && (
-          <FeedbackFormPopup setShowPopup={setShowFeedbackPopupForm}/>
+          <FeedbackFormPopup onCreate={fetchFeedbacks} setShowPopup={setShowFeedbackPopupForm}/>
         )}
 
         { showFeedbackPopupItem && (

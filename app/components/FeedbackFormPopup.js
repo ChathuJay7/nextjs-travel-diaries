@@ -5,8 +5,10 @@ import axios from 'axios'
 import PaperClip from './icons/PaperClip'
 import Trash from './icons/Trash'
 import { MoonLoader } from 'react-spinners'
+import Attachment from './Attachment'
 
-const FeedbackFormPopup = ({setShowPopup}) => {
+
+const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
@@ -19,6 +21,7 @@ const FeedbackFormPopup = ({setShowPopup}) => {
         axios.post('/api/feedback', {title: title, description: description, uploadImages})
             .then(() => {
                 setShowPopup(false)
+                onCreate()
             })
     }
 
@@ -63,17 +66,7 @@ const FeedbackFormPopup = ({setShowPopup}) => {
                     <label className='block mt-2 mb-1 text-slate-700'>Images</label>
                     <div className='flex gap-3'>
                         {uploadImages.map(link => (
-                            <a href={link} target='_blank' className='h-16 relative' key={link}>
-                                <button onClick={e => handleRemoveFilesButtonClick(e, link)} className='-right-2 -top-2 absolute bg-red-400 p-1  rounded-md text-white'>
-                                    <Trash />
-                                </button>
-                                {(link.endsWith('.jpg') || link.endsWith('.png') ) ? 
-                                    (<img className='h-16 w-auto rounded-md' src={link} alt=''/>) : 
-                                    (<div className='bg-gray-200 h-16 p-2 flex items-center rounded-md'>
-                                        <PaperClip className='w-4 h-4'/>
-                                        {link.split('/')[3].substring(13)}
-                                    </div>)}
-                            </a>
+                            <Attachment key={link} link={link} showRemoveButton={true} handleRemoveFilesButtonClick={(e, link) => handleRemoveFilesButtonClick(e, link)}/>
                         ))}
                     </div>
                 </div>
