@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import Button from './Button'
 import AttachFilesButton from './AttachFilesButton'
 import Attachment from './Attachment'
+import axios from 'axios'
 
-const CommentForm = () => {
+const CommentForm = ({ feedbackId }) => {
 
     const [ commentText, setCommentText ] = useState("")
     const [uploadImages, setUploadImages] = useState([])
@@ -20,8 +21,17 @@ const CommentForm = () => {
         })
     }
 
-    const handleCommentButtonClick = () => {
-        
+    const handleCommentButtonClick = (e) => {
+        e.preventDefault();
+
+        axios.post('/api/comment', {
+            text: commentText,
+            uploadImages,
+            feedbackId
+        })
+
+        setCommentText('')
+        setUploadImages([])
     }
 
   return (
