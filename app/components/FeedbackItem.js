@@ -39,7 +39,7 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes, onVotesC
         await signIn('google')
     }
 
-    
+    const iVoted = !!votes.find(v => v.userEmail === session?.user?.email)
 
   return (
     <a href='' onClick={ (e) => { e.preventDefault(); onOpenFeedback(); } } className='my-8 flex gap-8 items-center'>
@@ -56,7 +56,7 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes, onVotesC
                 </Popup>
             )}
             
-            <button onClick={handleVoteButtonClick} className='shadow-sm shadow-gray-200 border rounded-md px-4 py-1 flex items-center gap-1 text-gray-600'>
+            <Button primary={iVoted} onClick={handleVoteButtonClick} className="shadow-md border">
                     { !isVotesLoading && (
                         <>
                             <span className='triangle-vote-up'></span>
@@ -67,7 +67,7 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, votes, onVotesC
                         <MoonLoader size={18}/>
                     )}
     
-            </button>
+            </Button>
 
           </div>
     </a>

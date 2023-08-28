@@ -33,8 +33,10 @@ const FeedbackBoard = () => {
             const feedbackId = localStorage.getItem('vote after login')
 
             if(feedbackId) { 
-                axios.post('/api/vote', {feedbackId})
-                localStorage.removeItem('vote after login')
+                axios.post('/api/vote', {feedbackId}).then(() => {
+                  localStorage.removeItem('vote after login')
+                  fetchVotes()
+                })  
             }
         }
     }, [session?.user?.email])

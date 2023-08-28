@@ -4,10 +4,13 @@ import Button from './Button'
 import FeedbackItemPopupComments from './FeedbackItemPopupComments'
 import axios from 'axios'
 import { MoonLoader } from 'react-spinners'
+import { useSession } from 'next-auth/react'
+import Tick from './icons/Tick'
 
 const FeedbackItemPopup = ({_id ,title, description, votes, onVotesChange, setShowPopup}) => {
 
     const [isVotesLoading, setIsVotesLoading] = useState(false)
+    const {data:session} = useSession();
 
     function handleVoteButtonClick() {
         setIsVotesLoading(true)
@@ -16,6 +19,8 @@ const FeedbackItemPopup = ({_id ,title, description, votes, onVotesChange, setSh
             setIsVotesLoading(false)
         })
     }
+
+    const iVoted = votes.find(v => v.userEmail === session?.user?.email )
 
   return (
     <Popup title={''} setShowPopup={setShowPopup}>
@@ -30,8 +35,19 @@ const FeedbackItemPopup = ({_id ,title, description, votes, onVotesChange, setSh
                 )}
                 { !isVotesLoading && (
                     <>
-                        <span className='triangle-vote-up'></span>
-                        Upvote {votes?.length || '0'}
+                        {iVoted && (
+                            <>
+                                <Tick className='w-5 h-5'/>
+                                Upvoted {votes?.length}
+                            </>
+                        )}
+                        {!iVoted && (
+                            <>
+                                <span className='triangle-vote-up'></span>
+                                Upvote {votes?.length || '0'}
+                            </>
+                        )}
+                        
                     </>
                 )}
                 
