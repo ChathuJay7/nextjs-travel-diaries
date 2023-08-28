@@ -6,6 +6,7 @@ import PaperClip from './icons/PaperClip'
 import Trash from './icons/Trash'
 import { MoonLoader } from 'react-spinners'
 import Attachment from './Attachment'
+import AttachFilesButton from './AttachFilesButton'
 
 
 const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
@@ -25,25 +26,6 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
             })
     }
 
-    const handleAttachFilesInputChange = async (e) => {
-        const files = [...e.target.files]
-
-        setIsUploading(true)
-
-        const data = new FormData();
-
-        for(const file of files) {
-            data.append('file', file)
-        }
-
-        const res = await axios.post('/api/upload', data)
-        setUploadImages((existingUpload) => {
-            return [ ...existingUpload, ...res.data ]
-        })
-
-        setIsUploading(false)
-    }
-
 
     const handleRemoveFilesButtonClick = async(e, link) => {
         e.preventDefault();
@@ -53,6 +35,9 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
         })
     }
 
+    const addNewUploadImages = (newLinks) => {
+        setUploadImages(prevLinks => [...prevLinks, ...newLinks])
+    }
 
   return (
     <Popup setShowPopup={setShowPopup} title={"Make a suggestion"}>
@@ -72,13 +57,7 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
                 </div>
             )}
             <div className='flex gap-2 mt-2 justify-end '>
-                <label className={'flex gap-2 py-2 px-4 cursor-pointer'}>
-                    {isUploading && (<MoonLoader size={18}/>)}
-                    <span className={(isUploading ? 'text-gray-300' : 'text-gray-600')}>
-                        {isUploading ? "Uploading..." : "Attach files"}
-                    </span>
-                    <input multiple onChange={handleAttachFilesInputChange} type='file' className='hidden'/>
-                </label>
+                <AttachFilesButton onNewFiles={addNewUploadImages} />
                 <Button primary onClick={handleCreatePostButtonClick}>Create Post</Button>
             </div>
         </form>
