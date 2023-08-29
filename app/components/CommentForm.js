@@ -4,7 +4,7 @@ import AttachFilesButton from './AttachFilesButton'
 import Attachment from './Attachment'
 import axios from 'axios'
 
-const CommentForm = ({ feedbackId }) => {
+const CommentForm = ({ feedbackId, onPost }) => {
 
     const [ commentText, setCommentText ] = useState("")
     const [uploadImages, setUploadImages] = useState([])
@@ -29,9 +29,10 @@ const CommentForm = ({ feedbackId }) => {
             uploadImages,
             feedbackId
         })
-
-        setCommentText('')
-        setUploadImages([])
+        onPost();
+        setCommentText('');
+        setUploadImages([]);
+        
     }
 
   return (

@@ -20,8 +20,18 @@ const commentSchema = new Schema(
   },
   {
     timestamps: true,
+    toObject: {virtuals: true},
+    toJSON: {virtuals: true}
   }
 );
+
+commentSchema.virtual('user', {
+    ref: 'User',
+    localField: 'userEmail',
+    foreignField: 'email',
+    justOne: true
+})
+
 
 const CommentModel = mongoose.models.CommentModel || mongoose.model("CommentModel", commentSchema);
 export default CommentModel;
