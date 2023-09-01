@@ -1,7 +1,9 @@
 
 import FeedbackModel from "@/app/models/Feedback";
 import mongoose from "mongoose"
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req) {
 
@@ -11,9 +13,13 @@ export async function POST(req) {
     const mongoUrl = process.env.MONGO_URL
     await mongoose.connect(mongoUrl)
 
-    await FeedbackModel.create({ title, description, images:uploadImages })
+    const session = await getServerSession(authOptions)
+    const userEmail = session.user.email;
 
-    return NextResponse.json({ message: "Feedback added", data: feedback }, { status: 201 })
+    const feedbackCreated = await FeedbackModel.create({ title, description, images:uploadImages, userEmail })
+
+    // return NextResponse.json({ message: "Feedback added", data: feedback }, { status: 201 })
+    return NextResponse.json(feedbackCreated)
 }
 
 

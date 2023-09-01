@@ -7,6 +7,7 @@ import Trash from './icons/Trash'
 import { MoonLoader } from 'react-spinners'
 import Attachment from './Attachment'
 import AttachFilesButton from './AttachFilesButton'
+import { signIn, useSession } from 'next-auth/react'
 
 
 const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
@@ -15,15 +16,23 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
     const [description, setDescription] = useState("")
     const [uploadImages, setUploadImages] = useState([])
     const [isUploading, setIsUploading] = useState(false)
+    const { data: session } = useSession();
     
-    const handleCreatePostButtonClick = (e) => {
+    const handleCreatePostButtonClick = async (e) => {
         e.preventDefault();
 
-        axios.post('/api/feedback', {title: title, description: description, uploadImages})
+        if(session) {
+            axios.post('/api/feedback', {title: title, description: description, uploadImages})
             .then(() => {
                 setShowPopup(false)
                 onCreate()
             })
+        } else {
+            localStorage.setItem('post after login', JSON.stringify({
+                title, description, uploadImages
+            }));
+            await signIn('google');
+        }
     }
 
 
@@ -58,7 +67,9 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
             )}
             <div className='flex gap-2 mt-2 justify-end '>
                 <AttachFilesButton onNewFiles={addNewUploadImages} />
-                <Button primary onClick={handleCreatePostButtonClick}>Create Post</Button>
+                <Button primary onClick={handleCreatePostButtonClick}>
+                    { session ? "Create post" : "Login and Post" }
+                </Button>
             </div>
         </form>
     </Popup>

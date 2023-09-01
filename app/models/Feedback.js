@@ -32,6 +32,10 @@ const feedbackSchema = new Schema(
     images: {
         type: [String],
     },
+    userEmail: {
+      type: String,
+      required: true,
+  },
   },
   {
     timestamps: true,

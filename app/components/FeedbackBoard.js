@@ -28,13 +28,23 @@ const FeedbackBoard = () => {
 
     useEffect(() => {
         if(session?.user?.email){
-            const feedbackId = localStorage.getItem('vote after login')
-
-            if(feedbackId) { 
-                axios.post('/api/vote', {feedbackId}).then(() => {
+            const feedbackIdToVote = localStorage.getItem('vote after login')
+            if(feedbackIdToVote) { 
+                axios.post('/api/vote', {feedbackId: feedbackIdToVote}).then(() => {
                   localStorage.removeItem('vote after login')
                   fetchVotes()
                 })  
+            }
+
+            const feedbackToPost = localStorage.getItem('post after login')
+            if(feedbackToPost) { 
+              const feedbackData = JSON.parse(feedbackToPost)
+              axios.post('/api/feedback', feedbackData).then(async (res) => {
+                await fetchFeedbacks()
+                setShowFeedbackPopupItem(res.data)
+                console.log(res.data.data)
+                localStorage.removeItem('post after login')
+              })  
             }
         }
     }, [session?.user?.email])

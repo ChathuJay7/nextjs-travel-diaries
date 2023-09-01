@@ -12,6 +12,9 @@ export async function POST(req) {
 
     const session = await getServerSession(authOptions)
     const { email } = session.user
+    if(!session) {
+        return NextResponse.json(false)
+    }
 
     const comment = await req.json()
     const { text, uploadImages, feedbackId } = comment

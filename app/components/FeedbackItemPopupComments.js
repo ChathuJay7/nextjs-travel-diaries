@@ -12,7 +12,7 @@ const FeedbackItemPopupComments = ({feedbackId}) => {
 
   useEffect(() => {
     fetchComments();
-  }, [])
+  }, [comments])
 
   const fetchComments = () => {
     axios.get('/api/comment?feedbackId=' + feedbackId).then(res => {
