@@ -42,8 +42,18 @@ const FeedbackBoard = () => {
               axios.post('/api/feedback', feedbackData).then(async (res) => {
                 await fetchFeedbacks()
                 setShowFeedbackPopupItem(res.data)
-                console.log(res.data.data)
                 localStorage.removeItem('post after login')
+              })  
+            }
+
+            const commentToPost = localStorage.getItem('comment after login')
+            if(commentToPost) { 
+              const commentData = JSON.parse(commentToPost)
+              axios.post('/api/comment', commentData).then(async (res) => {
+                axios.get('/api/feedback?id=' + commentData.feedbackId).then(res => {
+                  setShowFeedbackPopupItem(res.data)
+                  localStorage.removeItem('comment after login')
+                })
               })  
             }
         }

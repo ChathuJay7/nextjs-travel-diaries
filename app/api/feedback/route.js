@@ -23,11 +23,22 @@ export async function POST(req) {
 }
 
 
-export async function GET() {
+export async function GET(req) {
 
     const mongoUrl = process.env.MONGO_URL
     await mongoose.connect(mongoUrl)
 
-    const feedbacks = await FeedbackModel.find();
-    return NextResponse.json({ feedbacks });
+    const url = new URL(req.url)
+    if(url.searchParams.get('id')) {
+        const feedback = await FeedbackModel.findById(url.searchParams.get('id'))
+        return NextResponse.json(feedback);
+        // return NextResponse.json(
+        //     await FeedbackModel.findById(url.searchParams.get('id'))
+        // );
+    } else {
+        const feedbacks = await FeedbackModel.find();
+        return NextResponse.json({ feedbacks });
+    }
+
+    
 }

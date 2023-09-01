@@ -3,11 +3,14 @@ import Button from './Button'
 import AttachFilesButton from './AttachFilesButton'
 import Attachment from './Attachment'
 import axios from 'axios'
+import { signIn, useSession } from 'next-auth/react'
 
 const CommentForm = ({ feedbackId, onPost }) => {
 
     const [ commentText, setCommentText ] = useState("")
     const [uploadImages, setUploadImages] = useState([])
+
+    const { data:session } = useSession();
 
     const addNewUploadImages = (newLinks) => {
         setUploadImages(prevLinks => [...prevLinks, ...newLinks])
@@ -21,17 +24,24 @@ const CommentForm = ({ feedbackId, onPost }) => {
         })
     }
 
-    const handleCommentButtonClick = (e) => {
+    const handleCommentButtonClick = async(e) => {
         e.preventDefault();
 
-        axios.post('/api/comment', {
+        const commentData = {
             text: commentText,
             uploadImages,
             feedbackId
-        })
-        onPost();
-        setCommentText('');
-        setUploadImages([]);
+        }
+
+        if(session) {
+            await axios.post('/api/comment', commentData)
+            onPost();
+            setCommentText('');
+            setUploadImages([]);
+        } else {
+            localStorage.setItem('comment after login', JSON.stringify(commentData))
+            await signIn('google');
+        }
         
     }
 
@@ -52,7 +62,9 @@ const CommentForm = ({ feedbackId, onPost }) => {
         )}
         <div className='flex justify-end gap-2 mt-2'>
             <AttachFilesButton onNewFiles={addNewUploadImages}/>
-            <Button onClick={handleCommentButtonClick} primary disabled={commentText === ''}>Comments</Button>
+            <Button onClick={handleCommentButtonClick} primary disabled={commentText === ''}>
+                {session ? "Comment" : "Login and Comment"}
+            </Button>
         </div>
       </form>
   )
