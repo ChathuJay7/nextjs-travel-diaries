@@ -39,8 +39,17 @@ const feedbackSchema = new Schema(
   },
   {
     timestamps: true,
+    toObject: {virtuals: true},
+    toJSON: {virtuals: true}
   }
 );
+
+feedbackSchema.virtual('user', {
+  ref: 'User',
+  localField: 'userEmail',
+  foreignField: 'email',
+  justOne: true
+})
 
 const FeedbackModel = mongoose.models.FeedbackModel || mongoose.model("FeedbackModel", feedbackSchema);
 export default FeedbackModel;

@@ -36,9 +36,35 @@ export async function GET(req) {
         //     await FeedbackModel.findById(url.searchParams.get('id'))
         // );
     } else {
-        const feedbacks = await FeedbackModel.find();
+        const feedbacks = await FeedbackModel.find().populate('user');
         return NextResponse.json({ feedbacks });
     }
-
     
+}
+
+export async function PUT(req) {
+
+    const feedback = await req.json();
+    const { id, title, description, uploadImages } = feedback;
+
+    const mongoUrl = process.env.MONGO_URL
+    await mongoose.connect(mongoUrl)
+
+    const session = await getServerSession(authOptions)
+
+    if(!session) {
+        return NextResponse.json(false);
+    }
+
+    const feedbackUpdated = await FeedbackModel.updateOne(
+        {_id: id, userEmail: session.user.email},
+        {
+            title,
+            description,
+            images: uploadImages
+        }
+
+    )
+
+    return NextResponse.json(feedbackUpdated)
 }

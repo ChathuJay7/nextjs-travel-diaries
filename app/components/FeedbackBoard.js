@@ -81,6 +81,13 @@ const FeedbackBoard = () => {
         setShowFeedbackPopupItem(feedback)
     }
 
+    async function handleFeedbackUpdate(updateDate) {
+        setShowFeedbackPopupItem(currentData => {
+          return { ...currentData, ...updateDate }
+        })
+        await fetchFeedbacks()
+    }
+
   return (
     <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
         { session?.user?.email || 'not logged in' }
@@ -110,7 +117,7 @@ const FeedbackBoard = () => {
         )}
 
         { showFeedbackPopupItem && (
-          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem}/>
+          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem} onUpdate={handleFeedbackUpdate}/>
         ) }
     </main>
   )
