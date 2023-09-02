@@ -59,10 +59,13 @@ const FeedbackBoard = () => {
         }
     }, [session?.user?.email])
 
-    async function fetchFeedbacks() {
+    function fetchFeedbacks() {
       axios.get("/api/feedback").then(res => {
+        console.log("Data fetched")
         setFeedbacks(res.data.feedbacks)
+        
       })
+      console.log(feedbacks)
     }
 
     async function fetchVotes() {
