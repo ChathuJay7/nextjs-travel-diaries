@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import VoteModel from "@/app/models/Vote";
 import { NextResponse } from "next/server";
+import FeedbackModel from "@/app/models/Feedback";
 
 export async function POST(req) {
 
@@ -16,13 +17,16 @@ export async function POST(req) {
     const { email } = session.user
 
     const existingVote = await VoteModel.findOne({feedbackId, userEmail: email})
+    
 
     if(existingVote){
         await VoteModel.findByIdAndDelete({ _id:existingVote._id })
+        await recountVotes(feedbackId)
         return NextResponse.json(existingVote)
     }
     else {
         const voteOutput = await VoteModel.create({ userEmail: email, feedbackId })
+        await recountVotes(feedbackId)
         return NextResponse.json({ message: "Vote added", voteOutput }, { status: 201 })
     }
     
@@ -39,4 +43,10 @@ export async function GET(req) {
     }
 
     return NextResponse.json([])
+}
+
+
+const recountVotes = async (feedbackId) => {
+    const votesCount = await VoteModel.countDocuments({feedbackId})
+    await FeedbackModel.updateOne({ _id: feedbackId }, { votesCountCached: votesCount })
 }

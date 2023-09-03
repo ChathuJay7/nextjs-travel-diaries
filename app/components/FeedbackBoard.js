@@ -15,6 +15,7 @@ const FeedbackBoard = () => {
     const [feedbacks, setFeedbacks] = useState([])
     const [votes, setVotes] = useState([])
     const [voteLoading, setVotesLoading] = useState([])
+    const [sort, setSort] = useState('votes')
     
     const { data: session } = useSession()
 
@@ -25,6 +26,10 @@ const FeedbackBoard = () => {
     useEffect(() => {
         fetchVotes()
     }, [feedbacks])
+
+    useEffect(() => {
+      fetchFeedbacks();
+    }, [sort])
 
     useEffect(() => {
         if(session?.user?.email){
@@ -60,7 +65,7 @@ const FeedbackBoard = () => {
     }, [session?.user?.email])
 
     function fetchFeedbacks() {
-      axios.get("/api/feedback").then(res => {
+      axios.get("/api/feedback?sort=" + sort).then(res => {
         console.log("Data fetched")
         setFeedbacks(res.data.feedbacks)
         
@@ -100,8 +105,13 @@ const FeedbackBoard = () => {
         </div>
 
         <div className='bg-gray-100 px-8 py-4 flex border-b'>
-          <div className='grow'>
-
+          <div className='grow flex items-center'>
+            <span className='text-gray-400 text-sm'>Sort by: </span>
+            <select value={sort} onChange={(e) => setSort(e.target.value)} className='bg-transparent px-1 py-2 text-gray-600'>
+              <option value="votes">Most voted</option>
+              <option value="latest">Latest</option>
+              <option value="oldest">Oldest</option>
+            </select>
           </div>
           <div>
             <Button primary onClick={openFeedbackPopupForm} >Make a suggestion</Button>

@@ -30,6 +30,7 @@ export async function GET(req) {
     await mongoose.connect(mongoUrl)
 
     const url = new URL(req.url)
+
     if(url.searchParams.get('id')) {
         const feedback = await FeedbackModel.findById(url.searchParams.get('id'))
         return NextResponse.json(feedback);
@@ -37,7 +38,20 @@ export async function GET(req) {
         //     await FeedbackModel.findById(url.searchParams.get('id'))
         // );
     } else {
-        const feedbacks = await FeedbackModel.find().populate('user');
+        let sortDef;
+        const sortParam = url.searchParams.get('sort');
+
+        if(sortParam === "latest") {
+            sortDef = {createdAt:-1}
+        }
+        if(sortParam === "oldest") {
+            sortDef = {createdAt:1}
+        }
+        if(sortParam === "votes") {
+            sortDef = {votesCountCached: -1}
+        }
+
+        const feedbacks = await FeedbackModel.find(null, null, {sort:sortDef}).populate('user');
         return NextResponse.json({ feedbacks });
     }
     

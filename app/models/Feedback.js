@@ -35,7 +35,11 @@ const feedbackSchema = new Schema(
     userEmail: {
       type: String,
       required: true,
-  },
+    },
+    votesCountCached: {
+      type: Number,
+      default: 0
+    },
   },
   {
     timestamps: true,
