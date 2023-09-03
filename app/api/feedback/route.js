@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import User from "@/app/models/User";
+import CommentModel from "@/app/models/Comment";
 
 export async function POST(req) {
 
@@ -40,6 +41,7 @@ export async function GET(req) {
     } else {
         let sortDef;
         const sortParam = url.searchParams.get('sort');
+        const searchParam = url.searchParams.get('search');
 
         if(sortParam === "latest") {
             sortDef = {createdAt:-1}
@@ -51,7 +53,19 @@ export async function GET(req) {
             sortDef = {votesCountCached: -1}
         }
 
-        const feedbacks = await FeedbackModel.find(null, null, {sort:sortDef}).populate('user');
+        let filter = null
+        if(searchParam) {
+            const comments = await CommentModel.find({text:{$regex:'.*'+searchParam+'.*'}},"feedbackId",{limit:10})
+            filter = {
+                $or:[
+                    {title:{$regex:'.*'+searchParam+'.*'}},
+                    {description:{$regex:'.*'+searchParam+'.*'}},
+                    {_id:comments.map(c => c.feedbackId)}
+                ]
+            }
+        }
+
+        const feedbacks = await FeedbackModel.find(filter, null, {sort:sortDef}).populate('user');
         return NextResponse.json({ feedbacks });
     }
     

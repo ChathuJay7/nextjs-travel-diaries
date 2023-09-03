@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import { useEffect, useState } from 'react'
 import axios from 'axios'
@@ -7,16 +7,27 @@ import Button from './Button'
 import FeedbackItem from './FeedbackItem'
 import FeedbackFormPopup from './FeedbackFormPopup'
 import FeedbackItemPopup from './FeedbackItemPopup'
+import Search from './icons/Search'
+import { debounce } from 'lodash'
+import { MoonLoader } from 'react-spinners'
 
 const FeedbackBoard = () => {
 
     const [showFeedbackPopupForm, setShowFeedbackPopupForm] = useState(false)
     const [showFeedbackPopupItem, setShowFeedbackPopupItem] = useState(null)
     const [feedbacks, setFeedbacks] = useState([])
+    const [fetchingFeedbacks, setFetchingFeedbacks] = useState(false)
+    const [waiting, setWaiting] = useState(false)
     const [votes, setVotes] = useState([])
     const [voteLoading, setVotesLoading] = useState([])
     const [sort, setSort] = useState('votes')
-    
+    const [searchPhrase, setSearchPhrase] = useState("")
+    const sortRef = useRef('votes')
+    const searchPhraseRef = useRef('')
+    const waitingRef = useRef(false);
+    const debouncedFetchFeedbacksRef = useRef(
+      debounce(fetchFeedbacks, 300)
+    );
     const { data: session } = useSession()
 
     useEffect(() => {
@@ -28,8 +39,15 @@ const FeedbackBoard = () => {
     }, [feedbacks])
 
     useEffect(() => {
-      fetchFeedbacks();
-    }, [sort])
+      searchPhraseRef.current = searchPhrase;
+      sortRef.current = sort;
+      setWaiting(true);
+      waitingRef.current= true
+      if(feedbacks?.length > 0){
+        setFeedbacks([])
+      }
+      debouncedFetchFeedbacksRef.current();
+    }, [sort, searchPhrase])
 
     useEffect(() => {
         if(session?.user?.email){
@@ -65,12 +83,15 @@ const FeedbackBoard = () => {
     }, [session?.user?.email])
 
     function fetchFeedbacks() {
-      axios.get("/api/feedback?sort=" + sort).then(res => {
-        console.log("Data fetched")
+      setFetchingFeedbacks(true)
+      axios.get(`/api/feedback?sort=${sortRef.current}&search=${searchPhraseRef.current}`).then(res => {
         setFeedbacks(res.data.feedbacks)
-        
+        console.log(sortRef)
+        setFetchingFeedbacks(false)
+        waitingRef.current = false
+        setWaiting(false)
       })
-      console.log(feedbacks)
+      
     }
 
     async function fetchVotes() {
@@ -104,25 +125,38 @@ const FeedbackBoard = () => {
           <p className='text-opacity-90 text-slate-700'>Help me decide what should I build next or how can I improve</p>
         </div>
 
-        <div className='bg-gray-100 px-8 py-4 flex border-b'>
-          <div className='grow flex items-center'>
-            <span className='text-gray-400 text-sm'>Sort by: </span>
-            <select value={sort} onChange={(e) => setSort(e.target.value)} className='bg-transparent px-1 py-2 text-gray-600'>
+        <div className='bg-gray-100 px-8 py-4 flex items-center border-b'>
+          <div className='grow flex items-center gap-4 text-gray-500'>
+            <select value={sort} onChange={(e) => setSort(e.target.value)} className='bg-transparent px-1 py-2 '>
               <option value="votes">Most voted</option>
               <option value="latest">Latest</option>
               <option value="oldest">Oldest</option>
             </select>
+            <div className='relative'>
+              <Search className='h-4 w-4 absolute top-3 left-2 pointer-events-none'/>
+              <input type='text' value={searchPhrase} onChange={(e) => setSearchPhrase(e.target.value)} placeholder='Search' className='bg-transparent p-2 pl-7'/>
+            </div>
           </div>
+          
           <div>
             <Button primary onClick={openFeedbackPopupForm} >Make a suggestion</Button>
           </div>
         </div>
 
         <div className='px-8'>
+          {(feedbacks?.length === 0 && (!fetchingFeedbacks && !waiting))  && (
+            <div className='py-8 text-4xl text-gray-400'>
+              No result Founds
+            </div>
+          )}
           { feedbacks.map( feedback => (
             <FeedbackItem { ...feedback } key={feedback._id} votes={votes.filter(v => v.feedbackId.toString() === feedback._id.toString())} onVotesChange={fetchVotes} parentLoadingVotes={voteLoading} onOpenFeedback={() => openFeedbackPopupItem(feedback)} />
           ) ) }
-          
+          {(fetchingFeedbacks || waiting) && (
+            <div className='p-4'>
+              <MoonLoader size={24} />
+            </div>
+          )}
         </div>
 
         {showFeedbackPopupForm && (
