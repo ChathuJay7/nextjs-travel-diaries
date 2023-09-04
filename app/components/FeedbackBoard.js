@@ -10,6 +10,8 @@ import FeedbackItemPopup from './FeedbackItemPopup'
 import Search from './icons/Search'
 import { debounce } from 'lodash'
 import { MoonLoader } from 'react-spinners'
+import hero from '@/app/images/hero.jpg'
+import Image from 'next/image'
 
 const FeedbackBoard = () => {
 
@@ -118,11 +120,13 @@ const FeedbackBoard = () => {
     }
 
   return (
-    <main className='bg-white md:max-w-2xl mx-auto md:shadow-lg md:rounded-lg md:mt-8 overflow-hidden'>
-        { session?.user?.email || 'not logged in' }
-        <div className='bg-gradient-to-r from-cyan-400 to-blue-400 p-8'>
-          <h1 className='font-bold text-xl'>Feedback Board</h1>
-          <p className='text-opacity-90 text-slate-700'>Help me decide what should I build next or how can I improve</p>
+    <main className='bg-[#d9ffec] md:max-w-full mx-auto md:shadow-lg md:rounded-lg  overflow-hidden'>
+        
+        <div className='bg-[#d9ffec] p-8'>
+          <h1 className='font-bold text-3xl text-center mb-5 text-teal-700'>Travel Diaries</h1>
+          <Image src={hero} alt="hero" className='rounded-md'/>
+          
+          <p className='text-opacity-90 text-teal-700 font-dancing-script text-center text-xl mt-2'>Take only Pictures. Leave only foot prints.</p>
         </div>
 
         <div className='bg-gray-100 px-8 py-4 flex items-center border-b'>
@@ -139,7 +143,7 @@ const FeedbackBoard = () => {
           </div>
           
           <div>
-            <Button primary onClick={openFeedbackPopupForm} >Make a suggestion</Button>
+            <Button primary onClick={openFeedbackPopupForm} >Add Post</Button>
           </div>
         </div>
 

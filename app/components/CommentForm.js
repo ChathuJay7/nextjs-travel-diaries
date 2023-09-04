@@ -46,7 +46,7 @@ const CommentForm = ({ feedbackId, onPost }) => {
     }
 
   return (
-    <form>
+    <form className='border-t'>
         <textarea className='border rounded-md w-full p-2' value={commentText} placeholder='Let usknow what you think...' onChange={e => setCommentText(e.target.value)}></textarea>
         {uploadImages.length > 0 && (
             <div className=''>

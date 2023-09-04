@@ -26,12 +26,12 @@ const AttachFilesButton = ({ onNewFiles }) => {
     }
 
   return (
-    <label className={'flex gap-2 py-2 px-4 cursor-pointer items-center'}>
+    <label className={'flex gap-2 py-2 px-4 cursor-pointer items-center text-[#218b56] border-solid border-2 border-[#218b56] rounded-md hover:bg-[#218b56] hover:text-white '}>
         {isUploading && (<MoonLoader size={18}/>)}
         {!isUploading && (
             <Upload className='w-4 h-4'/>
         )}
-        <span className={(isUploading ? 'text-gray-300' : 'text-gray-600')}>
+        <span className={(isUploading ? 'text-gray-300' : '')}>
             {isUploading ? "Uploading..." : "Attach files"}
         </span>
         <input multiple onChange={handleAttachFilesInputChange} type='file' className='hidden'/>

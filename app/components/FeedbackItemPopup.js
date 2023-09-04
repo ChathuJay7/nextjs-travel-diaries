@@ -10,6 +10,8 @@ import Attachment from './Attachment'
 import Edit from './icons/Edit'
 import AttachFilesButton from './AttachFilesButton'
 import Cancel from './icons/Cancel'
+import Like from './icons/Like'
+import LikeOutlined from './icons/LikeOutlined'
 
 const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChange, setShowPopup, user, onUpdate}) => {
 
@@ -96,6 +98,13 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
                     </div>
                 </div>
             )}
+            <div className='flex gap-1 items-center mt-2'>    
+                <p className='text-gray-600 text-xs'>Posted By:  </p>
+                <div className='rounded-full bg-blue-300 w-3 h-3 overflow-hidden'>
+                    <img src={user.image} alt='avatar' />
+                </div>
+                <p className='text-gray-600 text-xs'>{user.name}</p>
+            </div>
         </div>
         <div className='flex justify-end gap-2 px-8 py-2 border-b'> 
             {isEditMode && (
@@ -121,14 +130,14 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
                         <>
                             {iVoted && (
                                 <>
-                                    <Tick className='w-5 h-5'/>
-                                    Upvoted {votes?.length}
+                                    <Like className='w-5 h-5'/>
+                                    Liked {votes?.length}
                                 </>
                             )}
                             {!iVoted && (
                                 <>
-                                    <span className='triangle-vote-up'></span>
-                                    Upvote {votes?.length || '0'}
+                                    <LikeOutlined />
+                                    Like {votes?.length || '0'}
                                 </>
                             )}
                             
@@ -138,6 +147,7 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
                 </Button>
             ) }
         </div>
+        <p className='px-8 py-2'>Comments</p>
         <div>
             <FeedbackItemPopupComments feedbackId={_id}/>
         </div>

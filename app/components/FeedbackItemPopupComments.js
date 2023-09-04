@@ -73,10 +73,10 @@ const FeedbackItemPopupComments = ({feedbackId}) => {
       {comments.length > 0 && comments.map(comment => {
         
         const editingthisComment = editingComment?._id === comment._id;
-        const isAuthor = !!comment.user.email && comment.user.email === session.user?.email;
+        const isAuthor = !!comment?.user?.email && comment.user.email === session?.user?.email;
 
         return (
-          <div key={comment._id} className='mb-8'>
+          <div key={comment._id} className='mb-8 bg-[#b2f5d3] hover:bg-[#87e2b4] p-4 rounded-md'>
             <div className='flex gap-4'>
               <Avatar url={comment.user.image}/>
               <div>

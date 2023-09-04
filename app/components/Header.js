@@ -18,7 +18,7 @@ const Header = () => {
     }
 
   return (
-    <div className='max-w-2xl mx-auto flex justify-end p-2 gap-4 items-center'>
+    <div className='max-w-full mx-auto flex justify-between gap-4 items-center bg-gradient-to-r from-[#b3ffd9] to-[#23eb87] p-4'>
         {isLoggedIn && (
             <>
                 <span>

@@ -49,12 +49,12 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
     }
 
   return (
-    <Popup setShowPopup={setShowPopup} title={"Make a suggestion"}>
+    <Popup setShowPopup={setShowPopup} title={"Create Post"}>
         <form className='p-8'>
             <label className='block mt-4 mb-1 text-slate-700'>Title</label>
             <input className='w-full border p-2 rounded-md' type='text' placeholder='A short, descriptive title' value={title} onChange={e => setTitle(e.target.value)}/>
             <label className='block mt-4 mb-1 text-slate-700'>Description</label>
-            <textarea className='w-full border' placeholder='Please include details according to title' value={description} onChange={e => setDescription(e.target.value)}></textarea>
+            <textarea className='w-full border p-2 rounded-md' placeholder='Please include details according to title' value={description} onChange={e => setDescription(e.target.value)}></textarea>
             {uploadImages?.length > 0 && (
                 <div>
                     <label className='block mt-2 mb-1 text-slate-700'>Images</label>
