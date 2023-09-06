@@ -12,8 +12,10 @@ import AttachFilesButton from './AttachFilesButton'
 import Cancel from './icons/Cancel'
 import Like from './icons/Like'
 import LikeOutlined from './icons/LikeOutlined'
+import Trash from './icons/Trash'
+import TimeAgo from 'timeago-react'
 
-const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChange, setShowPopup, user, onUpdate}) => {
+const FeedbackItemPopup = ({_id, title, description, images, createdAt, votes, onVotesChange, setShowPopup, user, onUpdate, onDelete}) => {
 
     const [isVotesLoading, setIsVotesLoading] = useState(false)
     const [isEditMode, setIsEditMode] = useState(false)
@@ -69,6 +71,31 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
         })
     }
 
+    // const handleDeletePostButtonClick = () => {
+    //     axios.delete('/api/feedback', {
+    //         id: _id,
+    //     }).then(() => {
+    //         onDelete()
+    //         setShowPopup(false)
+            
+    //     })
+    // }
+    const handleDeletePostButtonClick = () => {
+        axios
+          .delete('/api/feedback', {
+            data: { id: _id }
+          })
+          .then((response) => {
+            // Check if the response contains a message
+            if (response.data && response.data.message) {
+              setShowPopup(false);
+              onDelete();
+              alert(response.data.message);
+            }
+          })
+    };
+      
+
 
     const iVoted = votes.find(v => v.userEmail === session?.user?.email )
 
@@ -78,9 +105,25 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
             {isEditMode && (
                 <input className='block w-full mb-2 p-2 border rounded-md' value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
             )}
-            {!isEditMode && (
+            {/* {!isEditMode && (
                 <h2 className='text-lg font-bold mb-2' >{title}</h2>
-            )}
+            )} */}
+
+            {(!isEditMode && user?.email && session?.user?.email === user?.email) ? (
+                <div className='flex justify-between mb-2'>
+                    <h2 className='text-lg font-bold mb-2' >{title}</h2>
+                    <span className='text-red-400 flex items-center gap-1 border-solid border-2 border-red-400 rounded-md px-2 hover:bg-red-400 hover:text-white hover:cursor-pointer font-bold' onClick={handleDeletePostButtonClick}>
+                        <Trash className='h-4 w-4'/> Delete
+                    </span >
+                </div>
+            ) : <h2 className='text-lg font-bold mb-2' >{title}</h2>}  
+
+            {/* {!isEditMode && user?.email && session?.user?.email === user?.email && (
+                <div className='flex justify-between'>
+                    <h2 className='text-lg font-bold mb-2' >{title}</h2>
+                    <p>Delete</p>
+                </div>
+            )} */}
             {isEditMode && (
                 <textarea className='block w-full mb-2 p-2 border rounded-md' value={newDescription} onChange={(e) => setNewDescription(e.target.value)} />
             )}
@@ -98,12 +141,18 @@ const FeedbackItemPopup = ({_id, title, description, images, votes, onVotesChang
                     </div>
                 </div>
             )}
-            <div className='flex gap-1 items-center mt-2'>    
-                <p className='text-gray-600 text-xs'>Posted By:  </p>
-                <div className='rounded-full bg-blue-300 w-3 h-3 overflow-hidden'>
-                    <img src={user.image} alt='avatar' />
+            <div className='mt-5'>
+                <div className='flex gap-1 items-center'>    
+                    <p className='text-gray-600 text-xs'>Posted By:  </p>
+                    <div className='rounded-full bg-blue-300 w-3 h-3 overflow-hidden'>
+                        <img src={user.image} alt='avatar' />
+                    </div>
+                    <p className='text-gray-600 text-xs'>{user.name}</p>
                 </div>
-                <p className='text-gray-600 text-xs'>{user.name}</p>
+                <div className='flex items-center gap-2'>
+                    <p className='text-gray-600 text-xs'>Posted At:  </p>
+                    <TimeAgo className='text-gray-600 text-xs' datetime={createdAt} locale='en-US' />
+                </div>
             </div>
         </div>
         <div className='flex justify-end gap-2 px-8 py-2 border-b'> 

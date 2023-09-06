@@ -12,7 +12,7 @@ const Attachment = ({ link, showRemoveButton=false, handleRemoveFilesButtonClick
         )}
         
         {(link.endsWith('.jpg') || link.endsWith('.png') ) ? 
-            (<img className='h-16 w-auto rounded-md' src={link} alt=''/>) : 
+            (<img className='h-16 w-auto rounded-md border-solid border-2 border-[#218b56] ' src={link} alt=''/>) : 
             (<div className='bg-gray-200 h-16 p-2 flex items-center rounded-md'>
                 <PaperClip className='w-4 h-4'/>
                 {link.split('/')[3].substring(13)}

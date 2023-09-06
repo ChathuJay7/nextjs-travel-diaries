@@ -168,7 +168,7 @@ const FeedbackBoard = () => {
         )}
 
         { showFeedbackPopupItem && (
-          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem} onUpdate={handleFeedbackUpdate}/>
+          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem} onUpdate={handleFeedbackUpdate} onDelete={fetchFeedbacks}/>
         ) }
     </main>
   )

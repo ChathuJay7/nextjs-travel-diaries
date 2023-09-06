@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import User from "@/app/models/User";
 import CommentModel from "@/app/models/Comment";
+import VoteModel from "@/app/models/Vote";
 
 export async function POST(req) {
 
@@ -96,4 +97,43 @@ export async function PUT(req) {
     )
 
     return NextResponse.json(feedbackUpdated)
+}
+
+
+export async function DELETE(req) {
+
+    const feedback = await req.json();
+    const { id } = feedback;
+    console.log(id)
+
+    const mongoUrl = process.env.MONGO_URL
+    await mongoose.connect(mongoUrl)
+
+    const session = await getServerSession(authOptions)
+
+    if(!session) {
+        return NextResponse.json(false);
+    }
+
+    const feedbackDelete = await FeedbackModel.deleteOne(
+        {_id: id, userEmail: session.user.email}
+        
+    )
+
+    const commentsDelete = await CommentModel.deleteMany(
+        {
+            feedbackId: id
+        }
+        
+    )
+
+    const votesDelete = await VoteModel.deleteMany(
+        {
+            feedbackId: id
+        }
+        
+    )
+
+    console.log("Feedback deleted")
+    return NextResponse.json({ message: 'Feedback deleted' });
 }
