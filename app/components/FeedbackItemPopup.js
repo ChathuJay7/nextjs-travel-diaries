@@ -155,7 +155,7 @@ const FeedbackItemPopup = ({_id, title, description, images, createdAt, votes, o
                 </div>
             </div>
         </div>
-        <div className='flex justify-end gap-2 px-8 py-2 border-b'> 
+        <div className='flex justify-end gap-2 px-8 py-2 border-b border-slate-500'> 
             {isEditMode && (
                 <>
                     <AttachFilesButton onNewFiles={handleNewUploadImagesButtonClick}/>

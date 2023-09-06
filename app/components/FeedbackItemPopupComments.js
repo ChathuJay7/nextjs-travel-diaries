@@ -7,6 +7,7 @@ import Attachment from './Attachment'
 import TimeAgo from 'timeago-react'
 import { useSession } from 'next-auth/react'
 import AttachFilesButton from './AttachFilesButton'
+import Trash from './icons/Trash'
 
 const FeedbackItemPopupComments = ({feedbackId}) => {
 
@@ -68,6 +69,18 @@ const FeedbackItemPopupComments = ({feedbackId}) => {
 
   }
 
+  const handleDeleteCommentButtonClick = (comment) => {
+    axios
+      .delete('/api/comment', {
+        data: { id: comment._id }
+      })
+      .then((response) => {
+        if (response.data && response.data.message) {
+          fetchComments()
+        }
+      })
+  };
+
   return (
     <div className='p-8'>
       {comments.length > 0 && comments.map(comment => {
@@ -76,20 +89,29 @@ const FeedbackItemPopupComments = ({feedbackId}) => {
         const isAuthor = !!comment?.user?.email && comment.user.email === session?.user?.email;
 
         return (
-          <div key={comment._id} className='mb-8 bg-[#b2f5d3] hover:bg-[#87e2b4] p-4 rounded-md'>
+          <div key={comment._id} className='mb-8 border-solid border-2 border-green-800 bg-[#b2f5d3] hover:bg-[#87e2b4] p-4 rounded-md '>
             <div className='flex gap-4'>
               <Avatar url={comment.user.image}/>
-              <div>
+              <div className='flex-grow'>
                   {editingthisComment && (
                     <textarea value={newCommentText} className='border p-2 block w-full' onChange={(e) => setNewCommentText(e.target.value)}/>
                   )}
-                  {!editingthisComment && (
-                    <p className='text-gray-600' >
-                      {comment.text} 
-                    </p>
-                  )}
+                  {(!editingthisComment && isAuthor) ? 
+                    (<div className='flex items-center justify-between w-full'>
+                      <p className='text-gray-600' >
+                        {comment.text} 
+                      </p>
+                      <span className='text-red-400 font-bold hover:text-red-700 hover:cursor-pointer' onClick={() => handleDeleteCommentButtonClick(comment)}><Trash /></span>
+                    </div>) : 
+                    (<div>
+                      <p className='text-gray-600' >
+                        {comment.text} 
+                      </p>
+                    </div>)
+
+                  }
                   
-                  <div className='text-gray-400 mt-2 text-sm'>
+                  <div className='text-gray-500 mt-2 text-sm'>
                     {comment.user.name} 
                     &nbsp; &middot; &nbsp;
                     <TimeAgo datetime={comment.createdAt} locale='en-US' />

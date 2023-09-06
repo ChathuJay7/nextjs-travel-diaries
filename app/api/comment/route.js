@@ -76,3 +76,26 @@ export async function PUT(req) {
 
     return NextResponse.json(commentUpdated)
 }
+
+export async function DELETE(req) {
+
+    const comment = await req.json();
+    const { id } = comment;
+    console.log(id)
+
+    const mongoUrl = process.env.MONGO_URL
+    await mongoose.connect(mongoUrl)
+
+    const session = await getServerSession(authOptions)
+
+    if(!session) {
+        return NextResponse.json(false);
+    }
+
+    const commentsDelete = await CommentModel.deleteOne(
+        {_id: id, userEmail: session.user.email} 
+    )
+
+    console.log("Comment deleted")
+    return NextResponse.json({ message: 'Comment deleted' });
+}

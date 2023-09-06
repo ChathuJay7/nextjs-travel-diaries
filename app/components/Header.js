@@ -24,7 +24,7 @@ const Header = () => {
                 <span>
                     Hello, {session?.user?.name}
                 </span>
-                <Button className="border bg-white shadow-sm px-2 py-0" onClick={logout}>Logout <Logout /></Button>
+                <Button className="border bg-white shadow-sm px-2 py-0 " loginBtn onClick={logout}>Logout <Logout /></Button>
             </>
         )}
         {!isLoggedIn && (
@@ -32,7 +32,7 @@ const Header = () => {
                 <span>
                     Not logged in
                 </span>
-                <Button className="border bg-white shadow-sm px-2 py-0" onClick={login}>Login <Login /></Button>
+                <Button className="border bg-white shadow-sm px-2 py-0 " loginBtn onClick={login}>Login <Login /></Button>
             </>
         )}
     </div>
