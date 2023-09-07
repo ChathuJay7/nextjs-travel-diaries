@@ -61,12 +61,26 @@ const FeedbackBoard = () => {
                 })  
             }
 
+            const feedbackIdToVotePostOpen = localStorage.getItem('vote after login post open')
+            if(feedbackIdToVotePostOpen) { 
+                axios.post('/api/vote', {feedbackId: feedbackIdToVotePostOpen}).then((res) => {
+
+                  axios.get('/api/feedback?id=' + feedbackIdToVotePostOpen).then(res => {
+                    console.log(res.data)
+                    setShowFeedbackPopupItem(res.data)
+                    localStorage.removeItem('vote after login post open')
+                    fetchVotes()
+                  })
+                })  
+            }
+
             const feedbackToPost = localStorage.getItem('post after login')
             if(feedbackToPost) { 
               const feedbackData = JSON.parse(feedbackToPost)
               axios.post('/api/feedback', feedbackData).then(async (res) => {
                 await fetchFeedbacks()
-                setShowFeedbackPopupItem(res.data)
+                
+                setShowFeedbackPopupItem(res.data.feedbackId)
                 localStorage.removeItem('post after login')
               })  
             }
@@ -76,6 +90,7 @@ const FeedbackBoard = () => {
               const commentData = JSON.parse(commentToPost)
               axios.post('/api/comment', commentData).then(async (res) => {
                 axios.get('/api/feedback?id=' + commentData.feedbackId).then(res => {
+                  console.log(res.data)
                   setShowFeedbackPopupItem(res.data)
                   localStorage.removeItem('comment after login')
                 })
@@ -168,7 +183,7 @@ const FeedbackBoard = () => {
         )}
 
         { showFeedbackPopupItem && (
-          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem} onUpdate={handleFeedbackUpdate} onDelete={fetchFeedbacks}/>
+          <FeedbackItemPopup {...showFeedbackPopupItem} votes={votes.filter(v => v.feedbackId.toString() === showFeedbackPopupItem._id )} onVotesChange={fetchVotes} setShowPopup={setShowFeedbackPopupItem} onUpdate={handleFeedbackUpdate} onDelete={fetchFeedbacks} />
         ) }
     </main>
   )

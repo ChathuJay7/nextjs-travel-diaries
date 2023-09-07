@@ -34,7 +34,7 @@ export async function GET(req) {
     const url = new URL(req.url)
 
     if(url.searchParams.get('id')) {
-        const feedback = await FeedbackModel.findById(url.searchParams.get('id'))
+        const feedback = await FeedbackModel.findById(url.searchParams.get('id')).populate('user');
         return NextResponse.json(feedback);
         // return NextResponse.json(
         //     await FeedbackModel.findById(url.searchParams.get('id'))

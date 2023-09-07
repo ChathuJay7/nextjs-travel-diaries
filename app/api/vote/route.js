@@ -18,7 +18,6 @@ export async function POST(req) {
 
     const existingVote = await VoteModel.findOne({feedbackId, userEmail: email})
     
-
     if(existingVote){
         await VoteModel.findByIdAndDelete({ _id:existingVote._id })
         await recountVotes(feedbackId)
@@ -27,7 +26,7 @@ export async function POST(req) {
     else {
         const voteOutput = await VoteModel.create({ userEmail: email, feedbackId })
         await recountVotes(feedbackId)
-        return NextResponse.json({ message: "Vote added", voteOutput }, { status: 201 })
+        return NextResponse.json(voteOutput)
     }
     
 }

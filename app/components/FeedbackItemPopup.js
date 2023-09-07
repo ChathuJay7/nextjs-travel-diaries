@@ -4,7 +4,7 @@ import Button from './Button'
 import FeedbackItemPopupComments from './FeedbackItemPopupComments'
 import axios from 'axios'
 import { MoonLoader } from 'react-spinners'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Tick from './icons/Tick'
 import Attachment from './Attachment'
 import Edit from './icons/Edit'
@@ -22,15 +22,24 @@ const FeedbackItemPopup = ({_id, title, description, images, createdAt, votes, o
     const [newTitle, setNewTitle] = useState(title)
     const [newDescription, setNewDescription] = useState(description)
     const [newUploadImages, setNewUploadImages] = useState(images)
-    const {data:session} = useSession();
 
-    function handleVoteButtonClick() {
-        setIsVotesLoading(true)
-        axios.post('api/vote', { feedbackId: _id }).then( async () => {
-            await onVotesChange();
-            setIsVotesLoading(false)
-        })
-    }
+    const {data:session} = useSession();
+    const isLoggedIn = !!session?.user?.email;
+
+    async function handleVoteButtonClick() {
+        if(!isLoggedIn) {
+            localStorage.setItem('vote after login post open', _id)
+            console.log(_id)
+            await signIn('google');
+        } else {
+            setIsVotesLoading(true);
+            axios.post('api/vote', {feedbackId: _id}).then( async() => {
+                await onVotesChange()
+                setIsVotesLoading(false);
+            });
+            
+        }
+    }  
 
     function handleEditButtonClick() {
         setIsEditMode(true)
@@ -95,7 +104,7 @@ const FeedbackItemPopup = ({_id, title, description, images, createdAt, votes, o
           })
     };
       
-
+console.log(user)
 
     const iVoted = votes.find(v => v.userEmail === session?.user?.email )
 
@@ -143,7 +152,7 @@ const FeedbackItemPopup = ({_id, title, description, images, createdAt, votes, o
             )}
             <div className='mt-5'>
                 <div className='flex gap-1 items-center'>    
-                    <p className='text-gray-600 text-xs'>Posted By:  </p>
+                    <p className='text-gray-600 text-xs'>Posted By: </p>
                     <div className='rounded-full bg-blue-300 w-3 h-3 overflow-hidden'>
                         <img src={user.image} alt='avatar' />
                     </div>

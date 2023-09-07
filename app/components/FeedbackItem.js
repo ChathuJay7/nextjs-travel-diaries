@@ -8,6 +8,8 @@ import Attachment from './Attachment';
 import TimeAgo from 'timeago-react';
 import Like from './icons/Like';
 import LikeOutlined from './icons/LikeOutlined';
+import Image from 'next/image';
+import google from '@/app/images/google-logo.png'
 
 const FeedbackItem = ({ onOpenFeedback, _id, title, description, images, user, createdAt, votes, onVotesChange, parentLoadingVotes=true }) => {
 
@@ -78,11 +80,16 @@ const FeedbackItem = ({ onOpenFeedback, _id, title, description, images, user, c
           </div>
           <div>
             {showLoginPopup && (
-                <Popup title={'Confirm your vote!'} narrow setShowPopup={setShowLoginPopup}>
-                    <div className='p-4'>
-                        <Button primary onClick={handleGoogleLoginButtonClick}>Login</Button>
-                    </div>
-                </Popup>
+                <div className='w-full'>
+                    <Popup title={'Confirm your vote!'} narrow setShowPopup={setShowLoginPopup}>
+                        <div className='p-4 flex items-center justify-center'>
+                            <Button primary onClick={handleGoogleLoginButtonClick}>
+                                <Image src={google} height={20} width={20} alt="google" className='rounded-md'/>
+                                Login
+                            </Button>
+                        </div>
+                    </Popup>
+                </div>
             )}
             
             <Button primary={iVoted} onClick={handleVoteButtonClick} className="shadow-md border ">

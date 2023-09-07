@@ -67,7 +67,7 @@ const FeedbackFormPopup = ({setShowPopup, onCreate}) => {
             )}
             <div className='flex gap-2 mt-2 justify-end '>
                 <AttachFilesButton onNewFiles={addNewUploadImages} />
-                <Button primary onClick={handleCreatePostButtonClick}>
+                <Button primary onClick={handleCreatePostButtonClick} disabled={title === '' || description === ''}>
                     { session ? "Create post" : "Login and Post" }
                 </Button>
             </div>
